@@ -4,6 +4,7 @@ import "./App.css";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Layout from "./components/Layout";
+import { Navigate } from "react-router-dom";
 
 function App() {
   const accessToken = localStorage.getItem("accessToken");
@@ -12,9 +13,14 @@ function App() {
     fetchData();
   }, []);
   const fetchData = async () => {
-    const response = await fetch("http://localhost:5000/menus");
+    const response = await fetch("http://localhost:5000/menus", {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
     console.log(await response.json());
   };
+  if (!accessToken) return <Navigate to={"/login"} />;
   return (
     <Layout>
       <div className="App">

@@ -4,10 +4,7 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
-import AccountCircle from "@mui/icons-material/AccountCircle";
 
-import MenuItem from "@mui/material/MenuItem";
-import Menu from "@mui/material/Menu";
 import {
   Divider,
   Drawer,
@@ -25,7 +22,8 @@ import LocalMallIcon from "@mui/icons-material/LocalMall";
 import ClassIcon from "@mui/icons-material/Class";
 import CategoryIcon from "@mui/icons-material/Category";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { Facebook } from "@mui/icons-material";
 const sidebarMenuItems = [
   { id: 1, label: "Orders", icon: <LocalMallIcon />, route: "/orders" },
   { id: 2, label: "Menus", icon: <LocalDiningIcon />, route: "/menus" },
@@ -52,9 +50,11 @@ const sidebarMenuItems = [
 ];
 
 const NavBar = () => {
+  const navigate = useNavigate();
   const [auth, setAuth] = useState(true);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [open, setOpen] = useState(false);
+  const accessToken = localStorage.getItem("accessToken");
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setAuth(event.target.checked);
@@ -114,51 +114,60 @@ const NavBar = () => {
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
-        <Toolbar>
+        <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
           <IconButton
             size="large"
             edge="start"
             color="inherit"
             aria-label="menu"
             sx={{ mr: 2 }}
-            onClick={() => setOpen(true)}
+            onClick={() => {
+              if (accessToken) {
+                setOpen(true);
+              }
+            }}
           >
-            <MenuIcon />
+            {accessToken ? <MenuIcon /> : <Facebook />}
           </IconButton>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+          <Typography variant="h6" component="div">
             Foodie POS
           </Typography>
-          {auth && (
-            <div>
-              <IconButton
-                size="large"
-                aria-label="account of current user"
-                aria-controls="menu-appbar"
-                aria-haspopup="true"
-                onClick={handleMenu}
-                color="inherit"
-              >
-                <AccountCircle />
-              </IconButton>
-              <Menu
-                id="menu-appbar"
-                anchorEl={anchorEl}
-                anchorOrigin={{
-                  vertical: "top",
-                  horizontal: "right",
-                }}
-                keepMounted
-                transformOrigin={{
-                  vertical: "top",
-                  horizontal: "right",
-                }}
-                open={Boolean(anchorEl)}
-                onClose={handleClose}
-              >
-                <MenuItem onClick={handleClose}>Profile</MenuItem>
-                <MenuItem onClick={handleClose}>My account</MenuItem>
-              </Menu>
-            </div>
+          {accessToken ? (
+            <Typography
+              variant="h6"
+              component="div"
+              sx={{ cursor: "pointer", userSelect: "none" }}
+              onClick={() => {
+                localStorage.removeItem("accessToken");
+                if (window.location.pathname === "/login") {
+                  navigate("/register");
+                } else {
+                  navigate("/login");
+                }
+              }}
+            >
+              {window.location.pathname === "/login"
+                ? "Create New Account"
+                : "LogOut"}
+            </Typography>
+          ) : (
+            <Typography
+              variant="h6"
+              component="div"
+              sx={{ cursor: "pointer", userSelect: "none" }}
+              onClick={() => {
+                localStorage.removeItem("accessToken");
+                if (window.location.pathname === "/login") {
+                  navigate("/register");
+                } else {
+                  navigate("/login");
+                }
+              }}
+            >
+              {window.location.pathname === "/login"
+                ? "Create New Account"
+                : "LogIn"}
+            </Typography>
           )}
         </Toolbar>
       </AppBar>

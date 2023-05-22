@@ -30,10 +30,11 @@ const Login = () => {
       <Box
         component="form"
         sx={{
-          "& > :not(style)": { m: 1, width: "25ch" },
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
+          maxWidth: "500px",
+          margin: "0 auto",
           mt: 2,
         }}
         noValidate
@@ -42,6 +43,7 @@ const Login = () => {
         <TextField
           label="Email"
           variant="outlined"
+          sx={{ minWidth: "400px" }}
           onChange={(evt) => {
             setUser({ ...user, email: evt.target.value });
           }}
@@ -50,11 +52,12 @@ const Login = () => {
           type="password"
           label="Password"
           variant="outlined"
+          sx={{ my: 2, minWidth: "400px" }}
           onChange={(evt) => {
             setUser({ ...user, password: evt.target.value });
           }}
         />
-        <Button variant="contained" onClick={login}>
+        <Button variant="contained" onClick={login} sx={{ minWidth: "200px" }}>
           Login
         </Button>
       </Box>

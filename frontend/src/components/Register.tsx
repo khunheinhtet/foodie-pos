@@ -4,8 +4,10 @@ import TextField from "@mui/material/TextField";
 import { Button } from "@mui/material";
 import { useState } from "react";
 import Layout from "./Layout";
+import { useNavigate } from "react-router-dom";
 
 const Register = () => {
+  const navigate = useNavigate();
   const [user, setUser] = useState({ name: "", email: "", password: "" });
   const register = async () => {
     const response = await fetch("http://localhost:5000/auth/register", {
@@ -15,7 +17,13 @@ const Register = () => {
       },
       body: JSON.stringify(user),
     });
-    console.log(await response.json());
+    if (response.ok) {
+      const responseData = await response.json();
+
+      console.log(responseData);
+      navigate("/");
+      return;
+    }
   };
   return (
     <Layout>
@@ -34,6 +42,7 @@ const Register = () => {
         <TextField
           label="Name"
           variant="outlined"
+          sx={{ minWidth: "400px" }}
           onChange={(evt) => {
             setUser({ ...user, name: evt.target.value });
           }}
@@ -41,6 +50,7 @@ const Register = () => {
         <TextField
           label="Email"
           variant="outlined"
+          sx={{ minWidth: "400px" }}
           onChange={(evt) => {
             setUser({ ...user, email: evt.target.value });
           }}
@@ -49,6 +59,7 @@ const Register = () => {
           type="password"
           label="Password"
           variant="outlined"
+          sx={{ minWidth: "400px" }}
           onChange={(evt) => {
             setUser({ ...user, password: evt.target.value });
           }}

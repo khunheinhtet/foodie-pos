@@ -23,8 +23,9 @@ import ClassIcon from "@mui/icons-material/Class";
 import CategoryIcon from "@mui/icons-material/Category";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import { Link, useNavigate } from "react-router-dom";
-import { Facebook } from "@mui/icons-material";
-const sidebarMenuItems = [
+import { Facebook, Home, WindowSharp } from "@mui/icons-material";
+export const sidebarMenuItems = [
+  { id: 0, label: "HomePage", icon: <Home />, route: "/" },
   { id: 1, label: "Orders", icon: <LocalMallIcon />, route: "/orders" },
   { id: 2, label: "Menus", icon: <LocalDiningIcon />, route: "/menus" },
   {
@@ -54,6 +55,7 @@ const NavBar = () => {
   const [auth, setAuth] = useState(true);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [open, setOpen] = useState(false);
+
   const accessToken = localStorage.getItem("accessToken");
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -72,7 +74,7 @@ const NavBar = () => {
       onKeyDown={() => setOpen(false)}
     >
       <List>
-        {sidebarMenuItems.slice(0, 6).map((menuItem) => (
+        {sidebarMenuItems.slice(0, 7).map((menuItem) => (
           <Link
             to={menuItem.route}
             key={menuItem.id}
@@ -128,10 +130,34 @@ const NavBar = () => {
             }}
           >
             {accessToken ? <MenuIcon /> : <Facebook />}
+            <Box sx={{ ml: 2 }}>
+              {accessToken
+                ? sidebarMenuItems.map(
+                    (menuItem) =>
+                      window.location.pathname === menuItem.route && (
+                        <Typography
+                          variant="h4"
+                          component="div"
+                          key={menuItem.id}
+                        >
+                          <ListItemText primary={menuItem.label} />
+                        </Typography>
+                      )
+                  )
+                : ""}
+            </Box>
           </IconButton>
-          <Typography variant="h6" component="div">
-            Foodie POS
-          </Typography>
+          <Box>
+            {accessToken ? (
+              <Typography variant="h5" component="div">
+                Welcome to FoodiesPos
+              </Typography>
+            ) : (
+              <Typography variant="h5" component="div">
+                You Neeed To Login First
+              </Typography>
+            )}
+          </Box>
           {accessToken ? (
             <Typography
               variant="h6"
@@ -139,16 +165,12 @@ const NavBar = () => {
               sx={{ cursor: "pointer", userSelect: "none" }}
               onClick={() => {
                 localStorage.removeItem("accessToken");
-                if (window.location.pathname === "/login") {
-                  navigate("/register");
-                } else {
-                  navigate("/login");
-                }
+                navigate("/logout");
               }}
             >
               {window.location.pathname === "/login"
                 ? "Create New Account"
-                : "LogOut"}
+                : "Logout"}
             </Typography>
           ) : (
             <Typography
@@ -171,11 +193,10 @@ const NavBar = () => {
           )}
         </Toolbar>
       </AppBar>
-      <Box>
-        <Drawer open={open} onClose={() => setOpen(false)}>
-          {renderDreawer()}
-        </Drawer>
-      </Box>
+
+      <Drawer open={open} onClose={() => setOpen(false)}>
+        {renderDreawer()}
+      </Drawer>
     </Box>
   );
 };

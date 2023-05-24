@@ -19,7 +19,7 @@ const Login = () => {
     });
     if (response.ok) {
       const responseData = await response.json();
-      console.log(responseData);
+
       const accessToken = responseData.accessToken;
       localStorage.setItem("accessToken", accessToken);
       navigate("/");

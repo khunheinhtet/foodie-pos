@@ -13,6 +13,7 @@ import AddonCategories from "./components/AddonCategories";
 import Locations from "./components/Locations";
 import Settings from "./components/Settings";
 import MenuCategories from "./components/MenuCategories";
+import Logout from "./components/Logout";
 
 const routes = createBrowserRouter([
   {
@@ -54,6 +55,10 @@ const routes = createBrowserRouter([
   {
     path: "/settings",
     element: <Settings />,
+  },
+  {
+    path: "/logout",
+    element: <Logout />,
   },
 ]);
 

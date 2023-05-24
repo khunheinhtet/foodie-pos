@@ -18,7 +18,6 @@ function App() {
         Authorization: `Bearer ${accessToken}`,
       },
     });
-    console.log(await response.json());
   };
   if (!accessToken) return <Navigate to={"/login"} />;
   return (

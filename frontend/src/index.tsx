@@ -14,6 +14,7 @@ import Locations from "./components/Locations";
 import Settings from "./components/Settings";
 import MenuCategories from "./components/MenuCategories";
 import Logout from "./components/Logout";
+import AppProvider from "./contexts/AppContext";
 
 const routes = createBrowserRouter([
   {
@@ -66,4 +67,8 @@ const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
 
-root.render(<RouterProvider router={routes} />);
+root.render(
+  <AppProvider>
+    <RouterProvider router={routes} />
+  </AppProvider>
+);

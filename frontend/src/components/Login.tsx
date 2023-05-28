@@ -5,8 +5,10 @@ import { Button } from "@mui/material";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Layout from "./Layout";
+import { AppContext } from "../contexts/AppContext";
 
 const Login = () => {
+  const { fetchData } = React.useContext(AppContext);
   const navigate = useNavigate();
   const [user, setUser] = useState({ email: "", password: "" });
   const login = async () => {
@@ -22,11 +24,12 @@ const Login = () => {
 
       const accessToken = responseData.accessToken;
       localStorage.setItem("accessToken", accessToken);
+      fetchData();
       navigate("/");
     }
   };
   return (
-    <Layout>
+    <Layout title="Login">
       <Box
         component="form"
         sx={{

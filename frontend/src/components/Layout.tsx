@@ -3,12 +3,13 @@ import NavBar from "./NavBar";
 
 interface Props {
   children: ReactNode;
+  title?: string;
 }
 
-const Layout = ({ children }: Props) => {
+const Layout = ({ title, children }: Props) => {
   return (
     <div>
-      <NavBar />
+      <NavBar title={title} />
       {children}
     </div>
   );

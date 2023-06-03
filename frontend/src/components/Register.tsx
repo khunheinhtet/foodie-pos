@@ -26,7 +26,7 @@ const Register = () => {
     }
   };
   return (
-    <Layout>
+    <Layout title="Register">
       <Box
         component="form"
         sx={{

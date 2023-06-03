@@ -49,12 +49,15 @@ export const sidebarMenuItems = [
   },
   { id: 7, label: "Settings", icon: <SettingsIcon />, route: "/settings" },
 ];
-
-const NavBar = () => {
+interface Props {
+  title?: string;
+}
+const NavBar = ({ title }: Props) => {
   const navigate = useNavigate();
   const [auth, setAuth] = useState(true);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [open, setOpen] = useState(false);
+  const navBarTitle = title ? `Foodie POS - ${title}` : "Foodie POS";
 
   const accessToken = localStorage.getItem("accessToken");
 
@@ -117,20 +120,22 @@ const NavBar = () => {
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
         <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
-          <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="menu"
-            sx={{ mr: 2 }}
-            onClick={() => {
-              if (accessToken) {
-                setOpen(true);
-              }
-            }}
-          >
-            {accessToken ? <MenuIcon /> : <Facebook />}
-            <Box sx={{ ml: 2 }}>
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <IconButton
+              size="large"
+              edge="start"
+              color="inherit"
+              aria-label="menu"
+              sx={{ mr: 2 }}
+              onClick={() => {
+                if (accessToken) {
+                  setOpen(true);
+                }
+              }}
+            >
+              {accessToken ? <MenuIcon /> : <Facebook />}
+            </IconButton>
+            <Box>
               {accessToken
                 ? sidebarMenuItems.map(
                     (menuItem) =>
@@ -146,11 +151,11 @@ const NavBar = () => {
                   )
                 : ""}
             </Box>
-          </IconButton>
+          </Box>
           <Box>
             {accessToken ? (
               <Typography variant="h5" component="div">
-                Welcome to FoodiesPos
+                {navBarTitle}
               </Typography>
             ) : (
               <Typography variant="h5" component="div">

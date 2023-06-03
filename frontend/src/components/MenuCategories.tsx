@@ -6,7 +6,7 @@ const MenuCategories = () => {
   };
   fetchData();
   return (
-    <Layout>
+    <Layout title="MenuCategories">
       <div>
         <h2>This is MenuCategories Page</h2>
       </div>

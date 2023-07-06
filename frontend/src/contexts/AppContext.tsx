@@ -1,56 +1,63 @@
 import { createContext, useEffect, useState } from "react";
+import { config } from "../config/config";
 import {
   Addon,
   AddonCategory,
   Company,
+  Location,
   Menu,
   MenuCategory,
-  MenuLocation,
-  Location,
+  MenuMenuCategoriesLocations,
+  MenusAddonCategories,
+  Table,
 } from "../typings/types";
-import { config } from "../config/config";
-import { Navigate } from "react-router-dom";
-
+import { getAccessToken } from "../utils";
 interface AppContextType {
   menus: Menu[];
   menuCategories: MenuCategory[];
   addons: Addon[];
   addonCategories: AddonCategory[];
   locations: Location[];
-  menuLocations: MenuLocation[];
+  menusAddonCategories: MenusAddonCategories[];
+  menuMenuCategoriesLocations: MenuMenuCategoriesLocations[];
   company: Company | null;
+  tables: Table[];
   updateData: (value: any) => void;
-  fetchData: () => void;
+  fetchData: (accessToken: string) => void;
 }
 
 export const defaultContext: AppContextType = {
   menus: [],
+
   menuCategories: [],
   addons: [],
   addonCategories: [],
   locations: [],
-  menuLocations: [],
+  menusAddonCategories: [],
   company: null,
+  tables: [],
+  menuMenuCategoriesLocations: [],
   updateData: () => {},
-  fetchData: () => {},
+  fetchData: (accessToken: string) => {},
 };
 
 export const AppContext = createContext<AppContextType>(defaultContext);
 
 const AppProvider = (props: any) => {
   const [data, updateData] = useState(defaultContext);
-  const accessToken = localStorage.getItem("accessToken");
-
+  const accessToken = getAccessToken();
   useEffect(() => {
     if (accessToken) {
-      fetchData();
+      fetchData(accessToken);
     }
   }, [accessToken]);
 
-  const fetchData = async () => {
+  const fetchData = async (accessToken: string) => {
+    if (!accessToken) return;
+
     const response = await fetch(`${config.apiBaseUrl}`, {
       headers: {
-        Authorization: `Bearer ${accessToken}`,
+        authorization: `Bearer ${accessToken}`,
       },
     });
     const responseJson = await response.json();
@@ -60,8 +67,10 @@ const AppProvider = (props: any) => {
       addons,
       addonCategories,
       locations,
-      menuLocations,
+      menusAddonCategories,
       company,
+      tables,
+      menuMenuCategoriesLocations,
     } = responseJson;
     updateData({
       ...data,
@@ -70,8 +79,10 @@ const AppProvider = (props: any) => {
       addons,
       addonCategories,
       locations,
-      menuLocations,
+      menusAddonCategories,
       company,
+      tables,
+      menuMenuCategoriesLocations,
     });
   };
 

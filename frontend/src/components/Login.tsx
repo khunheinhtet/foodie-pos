@@ -1,14 +1,11 @@
-import * as React from "react";
+import { Button } from "@mui/material";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
-import { Button } from "@mui/material";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Layout from "./Layout";
-import { AppContext } from "../contexts/AppContext";
 
 const Login = () => {
-  const { fetchData } = React.useContext(AppContext);
   const navigate = useNavigate();
   const [user, setUser] = useState({ email: "", password: "" });
   const login = async () => {
@@ -24,7 +21,7 @@ const Login = () => {
 
       const accessToken = responseData.accessToken;
       localStorage.setItem("accessToken", accessToken);
-      fetchData();
+
       navigate("/");
     }
   };

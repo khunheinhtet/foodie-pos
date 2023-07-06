@@ -1,6 +1,6 @@
 import express, { Request, Response } from "express";
-import { checkAuth } from "../utils/auth";
 import { db } from "../db/db";
+import { checkAuth } from "../utils/auth";
 import { fileUpload } from "../utils/fileUpload";
 export const appRouter = express.Router();
 
@@ -9,7 +9,7 @@ appRouter.get("/", checkAuth, async (req: Request, res: Response) => {
     //@ts-ignore
     req.email,
   ]);
-  console.log("appRouter...");
+
   const userRows = userResult.rows;
   if (!userRows.length) return res.sendStatus(401);
 
@@ -17,26 +17,32 @@ appRouter.get("/", checkAuth, async (req: Request, res: Response) => {
   const companyId = user.companies_id;
 
   const locations = await db.query(
-    "select * from locations where companies_id = $1",
+    "select * from locations where companies_id = $1 and is_archived = false",
     [companyId]
   );
   const locationIds = locations.rows.map((row) => row.id);
-  const menuLocations = await db.query(
-    "select * from menus_locations where locations_id = ANY($1::int[])",
+  const menuMenuCategoriesLocations = await db.query(
+    "select * from menus_menu_categories_locations where locations_id = ANY($1::int[])  AND is_archived = $2",
+    [locationIds, false]
+  );
+
+  const tablesResult = await db.query(
+    `
+  select * from tables where locations_id = ANY($1::int[]) and is_archived = false`,
     [locationIds]
   );
 
-  const menuIds = menuLocations.rows.map((row) => row.menus_id);
+  const menuIds = menuMenuCategoriesLocations.rows.map((row) => row.menus_id);
 
   const menus = await db.query(
-    `select * from menus where id = ANY($1::int[])`,
+    `select * from menus where is_archived = false and id = ANY($1::int[])`,
     [menuIds]
   );
-  const menuMenuCategoriesResult = await db.query(
+  /*  const menuMenuCategoriesResult = await db.query(
     "select * from menus_menu_categories where menus_id = ANY($1::int[])",
     [menuIds]
-  );
-  const menuCategoryIds = menuMenuCategoriesResult.rows.map(
+  ); */
+  const menuCategoryIds = menuMenuCategoriesLocations.rows.map(
     (row) => row.menu_categories_id
   );
   const menuCategoriesResult = await db.query(
@@ -51,11 +57,11 @@ appRouter.get("/", checkAuth, async (req: Request, res: Response) => {
     (row) => row.addon_categories_id
   );
   const addonCategories = await db.query(
-    "select * from addon_categories where id = ANY($1::int[])",
+    "select * from addon_categories where id = ANY($1::int[]) and is_archived = false",
     [addonCategoryIds]
   );
   const addons = await db.query(
-    "select * from addons where addon_categories_id = ANY($1::int[])",
+    "select * from addons where addon_categories_id = ANY($1::int[]) and is_archived = false",
     [addonCategoryIds]
   );
   const companyResult = await db.query(
@@ -68,8 +74,10 @@ appRouter.get("/", checkAuth, async (req: Request, res: Response) => {
     menuCategories: menuCategoriesResult.rows,
     addons: addons.rows,
     addonCategories: addonCategories.rows,
+    menusAddonCategories: menusAddonCategoriesResult.rows,
     locations: locations.rows,
-    menuLocations: menuLocations.rows,
+    tables: tablesResult.rows,
+    menuMenuCategoriesLocations: menuMenuCategoriesLocations.rows,
     company,
   });
 });
@@ -80,7 +88,9 @@ appRouter.post("/assets", (req: Request, res: Response) => {
       if (error) {
         return res.sendStatus(500);
       }
+
       const files = req.files as Express.MulterS3.File[];
+
       const file = files[0];
       const assetUrl = file.location;
       res.send({ assetUrl });
@@ -90,4 +100,21 @@ appRouter.post("/assets", (req: Request, res: Response) => {
     res.sendStatus(500);
   }
 });
+/* appRouter.post("/assets", (req: Request, res: Response) => {
+  try {
+    fileUpload(req, res, async (error) => {
+      if (error) {
+        return res.sendStatus(500);
+      }
+      const files = req.files as Express.MulterS3.File[];
+
+      const file = files[0];
+      const assetUrl = file.location;
+      res.send({ assetUrl });
+    });
+  } catch (err) {
+    console.log("This is errr....", err);
+    res.sendStatus(500);
+  }
+}); */
 export default appRouter;

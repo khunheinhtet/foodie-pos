@@ -3,44 +3,35 @@ import { Box, Button, Paper, Typography } from "@mui/material";
 import { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import { AppContext } from "../contexts/AppContext";
-import {
-  getAddonByLocationIds,
-  getAddonCategoriesByLocationId,
-} from "../utils";
-import CreateNewAddon from "./CreateNewAddon";
+import { getSelectedLocationId } from "../utils";
+import CreateTable from "./CreateTable";
 import Layout from "./Layout";
 
-const Addons = () => {
-  const {
-    addonCategories,
-    addons,
-    menuMenuCategoriesLocations,
-    menusAddonCategories,
-  } = useContext(AppContext);
+const Tables = () => {
+  const { tables, fetchData } = useContext(AppContext);
   const [open, setOpen] = useState(false);
-  const validAddonCategories = getAddonCategoriesByLocationId(
-    addonCategories,
-    menusAddonCategories,
-    menuMenuCategoriesLocations
+  const selectedLocationId = getSelectedLocationId();
+
+  const validTables = tables.filter(
+    (item) => item.locations_id === Number(selectedLocationId)
   );
-  const validAddon = getAddonByLocationIds(addons, validAddonCategories);
   return (
-    <Layout title="Addons">
+    <Layout title="Table">
       <Box sx={{ display: "flex", px: 3, pt: 3, flexDirection: "column" }}>
-        <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+        <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 2 }}>
           <Button
             startIcon={<Add />}
             variant="contained"
             onClick={() => setOpen(true)}
           >
-            Create New Addon
+            Create New Table
           </Button>
         </Box>
         <Box sx={{ display: "flex" }}>
-          {validAddon.map((item) => {
+          {validTables.map((item) => {
             return (
               <Link
-                to={`/addons/${item.id}`}
+                to={`/tables/${item.id}`}
                 key={item.id}
                 style={{ textDecoration: "none", color: "#000000" }}
               >
@@ -62,9 +53,6 @@ const Addons = () => {
                     <Typography sx={{ color: "#4C4C6D", fontWeight: "700" }}>
                       {item.name}
                     </Typography>
-                    <Typography sx={{ color: "#4C4C6D", fontWeight: "700" }}>
-                      {item.price}
-                    </Typography>
                   </Paper>
                 </Box>
               </Link>
@@ -72,9 +60,9 @@ const Addons = () => {
           })}
         </Box>
       </Box>
-      <CreateNewAddon open={open} setOpen={setOpen} />
+      <CreateTable open={open} setOpen={setOpen} />
     </Layout>
   );
 };
 
-export default Addons;
+export default Tables;

@@ -1,16 +1,13 @@
-import dotenv from "dotenv";
-dotenv.config();
-import express, { Request, Response } from "express";
 import cors from "cors";
-import { db } from "./src/db/db";
-import bcrypt, { compare } from "bcrypt";
-import jwt from "jsonwebtoken";
-import { config } from "./src/config/config";
-import { checkAuth } from "./src/utils/auth";
+import express from "express";
+import addonCategoriesRouter from "./src/routers/addonCategoriesRouter";
+import addonsRouter from "./src/routers/addonsRouter";
 import appRouter from "./src/routers/appRouter";
 import authRouter from "./src/routers/authRouter";
-import menusRouter from "./src/routers/menusRouter";
 import locationsRouter from "./src/routers/locationsRouter";
+import { menuCategoriesRouter } from "./src/routers/menuCategoriesRouter";
+import menusRouter from "./src/routers/menusRouter";
+import tableRouter from "./src/routers/tableRouter";
 
 const app = express();
 const port = 5000;
@@ -21,6 +18,10 @@ app.use("/", appRouter);
 app.use("/auth", authRouter);
 app.use("/menus", menusRouter);
 app.use("/locations", locationsRouter);
+app.use("/tables", tableRouter);
+app.use("/menuCategories", menuCategoriesRouter);
+app.use("/addonCategories", addonCategoriesRouter);
+app.use("/addons", addonsRouter);
 
 /* app.post("/auth/register", async (req: Request, res: Response) => {
   const { name, email, password } = req.body;

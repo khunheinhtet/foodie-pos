@@ -1,83 +1,62 @@
+import { Add } from "@mui/icons-material";
+import { Box, Button, Paper, Typography } from "@mui/material";
 import { useContext, useState } from "react";
-import Layout from "./Layout";
+import { Link } from "react-router-dom";
 import { AppContext } from "../contexts/AppContext";
-import { Box, Button, TextField, Typography } from "@mui/material";
-import { config } from "../config/config";
+import CreateNewLocation from "./CreateNewLocation";
+import Layout from "./Layout";
 
 const Locations = () => {
-  const { locations, fetchData, company } = useContext(AppContext);
-  console.log(company?.id);
-  const [newLocation, setNewLocation] = useState({
-    name: "",
-    address: "",
-    companyId: company?.id,
-  });
-  const accessToken = localStorage.getItem("accessToken");
-  console.log(newLocation);
-  const createNewLocation = async () => {
-    await fetch(`${config.apiBaseUrl}/locations`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(newLocation),
-    });
-    fetchData();
-    setNewLocation({ name: "", address: "", companyId: company?.id });
-  };
-  const updateLocation = async () => {};
+  const { locations } = useContext(AppContext);
+  const [open, setOpen] = useState(false);
+
   return (
     <Layout title="Locations">
-      <Box sx={{ mt: 3, ml: 3 }}>
-        {locations.map((location, index) => {
-          return (
-            <Box sx={{ display: "flex", alignItems: "center" }} key={index}>
-              <Typography variant="h5" sx={{ mr: 3 }}>
-                {index + 1}.
-              </Typography>
-              <TextField
-                defaultValue={location.name}
-                sx={{ mr: 2, mb: 2 }}
-              ></TextField>
-              <TextField
-                defaultValue={location.address}
-                sx={{ mr: 2, mb: 2 }}
-              ></TextField>
-              <Button
-                variant="contained"
-                sx={{ mr: 2, mb: 2 }}
-                onClick={updateLocation}
-              >
-                Update
-              </Button>
-            </Box>
-          );
-        })}
-        <Box sx={{ display: "flex", alignItems: "center", ml: 5 }}>
-          <TextField
-            value={newLocation.name}
-            sx={{ mr: 2, mb: 2 }}
-            onChange={(evt) =>
-              setNewLocation({ ...newLocation, name: evt.target.value })
-            }
-          ></TextField>
-          <TextField
-            value={newLocation.address}
-            sx={{ mr: 2, mb: 2 }}
-            onChange={(evt) =>
-              setNewLocation({ ...newLocation, address: evt.target.value })
-            }
-          ></TextField>
+      <Box sx={{ display: "flex", px: 3, pt: 3, flexDirection: "column" }}>
+        <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
           <Button
+            startIcon={<Add />}
             variant="contained"
-            sx={{ mr: 2, mb: 2 }}
-            onClick={createNewLocation}
+            onClick={() => setOpen(true)}
           >
-            Create
+            Create New Location
           </Button>
         </Box>
+        <Box sx={{ display: "flex" }}>
+          {locations &&
+            locations.map((item) => {
+              return (
+                <Link
+                  to={`/locations/${item.id}`}
+                  key={item.id}
+                  style={{ textDecoration: "none", color: "#000000" }}
+                >
+                  <Box>
+                    <Paper
+                      elevation={2}
+                      sx={{
+                        width: "170px",
+                        height: "170px",
+                        mr: 4,
+                        mb: 5,
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "flex-end",
+                        pl: 2,
+                        pb: 2,
+                      }}
+                    >
+                      <Typography sx={{ color: "#4C4C6D", fontWeight: "700" }}>
+                        {item.name}
+                      </Typography>
+                    </Paper>
+                  </Box>
+                </Link>
+              );
+            })}
+        </Box>
       </Box>
+      <CreateNewLocation open={open} setOpen={setOpen} />
     </Layout>
   );
 };

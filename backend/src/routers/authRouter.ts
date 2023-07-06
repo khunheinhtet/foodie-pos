@@ -1,11 +1,11 @@
-import express, { Request, Response } from "express";
-import { db } from "../db/db";
 import bcrypt from "bcrypt";
+import express, { Request, Response } from "express";
 import jwt from "jsonwebtoken";
-import { config } from "../config/config";
+import { db } from "../db/db";
 const authRouter = express.Router();
 
 authRouter.post("/login", async (req: Request, res: Response) => {
+  const JWT_SECRET = process.env.JWT_SECRET as string;
   const { email, password } = req.body;
   if (!email || !password) return res.sendStatus(400);
 
@@ -21,7 +21,7 @@ authRouter.post("/login", async (req: Request, res: Response) => {
   const isCorrectPassword = await bcrypt.compare(password, hashedPassword);
   //return isCorrectPassword ? res.sendStatus(200) : res.sendStatus(401);
   if (isCorrectPassword) {
-    const accessToken = jwt.sign(user, config.jwtSecret);
+    const accessToken = jwt.sign(user, JWT_SECRET);
 
     return res.send({ accessToken });
   }
@@ -71,13 +71,6 @@ authRouter.post("/register", async (req: Request, res: Response) => {
     const menus = menusResult.rows;
     const defaultMenuId1 = menus[0].id;
     const defaultMenuId2 = menus[1].id;
-    await db.query(
-      "insert into menus_locations(menus_id, locations_id) select * from unnest ($1::int[], $2::int[])",
-      [
-        [defaultMenuId1, defaultMenuId2],
-        [locationId, locationId],
-      ]
-    );
 
     const menuCategoriesResult = await db.query(
       "insert into menu_categories (name) values ('defaultMenuId1'), ('defaultMenuId2') returning *"
@@ -85,11 +78,9 @@ authRouter.post("/register", async (req: Request, res: Response) => {
     const defaultMenuCategories = menuCategoriesResult.rows;
     const defaultMenuCategoryId1 = defaultMenuCategories[0].id;
     const defaultMenuCategoryId2 = defaultMenuCategories[1].id;
-
     await db.query(
-      `insert into menus_menu_categories(menus_id, menu_categories_id) values(${defaultMenuId1}, ${defaultMenuCategoryId1}), (${defaultMenuId2}, ${defaultMenuCategoryId2})`
+      `insert into menus_menu_categories_locations(menus_id, menu_categories_id, locations_id) values (${defaultMenuId1}, ${defaultMenuCategoryId1}, ${locationId}), (${defaultMenuId2}, ${defaultMenuCategoryId2}, ${locationId})`
     );
-
     const defaultAddonCategoriesResult = await db.query(
       "insert into addon_categories(name, is_required) values ('Drinks', true), ('Size', true) returning *"
     );

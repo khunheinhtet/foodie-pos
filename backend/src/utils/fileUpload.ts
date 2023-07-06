@@ -21,7 +21,7 @@ export const fileUpload = multer({
     bucket: "msquarefdc",
     acl: "public-read",
     key: function (request, file, cb) {
-      cb(null, `foodie-pos/heinhtet/${Date.now()}_${file.originalname}`);
+      cb(null, `foodie-pos/khun-hein-htet/${Date.now()}_${file.originalname}`);
     },
   }),
 }).array("files", 1);

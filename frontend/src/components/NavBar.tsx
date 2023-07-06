@@ -1,10 +1,18 @@
+import MenuIcon from "@mui/icons-material/Menu";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
+import IconButton from "@mui/material/IconButton";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import IconButton from "@mui/material/IconButton";
-import MenuIcon from "@mui/icons-material/Menu";
 
+import { TableBar } from "@mui/icons-material";
+import CategoryIcon from "@mui/icons-material/Category";
+import ClassIcon from "@mui/icons-material/Class";
+import LocalDiningIcon from "@mui/icons-material/LocalDining";
+import LocalMallIcon from "@mui/icons-material/LocalMall";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
+import LunchDiningIcon from "@mui/icons-material/LunchDining";
+import SettingsIcon from "@mui/icons-material/Settings";
 import {
   Divider,
   Drawer,
@@ -15,18 +23,9 @@ import {
   ListItemText,
 } from "@mui/material";
 import { useState } from "react";
-import LunchDiningIcon from "@mui/icons-material/LunchDining";
-import LocalDiningIcon from "@mui/icons-material/LocalDining";
-import SettingsIcon from "@mui/icons-material/Settings";
-import LocalMallIcon from "@mui/icons-material/LocalMall";
-import ClassIcon from "@mui/icons-material/Class";
-import CategoryIcon from "@mui/icons-material/Category";
-import LocationOnIcon from "@mui/icons-material/LocationOn";
 import { Link, useNavigate } from "react-router-dom";
-import { Facebook, Home, WindowSharp } from "@mui/icons-material";
 export const sidebarMenuItems = [
-  { id: 0, label: "HomePage", icon: <Home />, route: "/" },
-  { id: 1, label: "Orders", icon: <LocalMallIcon />, route: "/orders" },
+  { id: 1, label: "Orders", icon: <LocalMallIcon />, route: "/" },
   { id: 2, label: "Menus", icon: <LocalDiningIcon />, route: "/menus" },
   {
     id: 3,
@@ -41,13 +40,21 @@ export const sidebarMenuItems = [
     icon: <ClassIcon />,
     route: "/addon-categories",
   },
+
   {
     id: 6,
+    label: "Tables",
+    icon: <TableBar />,
+    route: "/tables",
+  },
+  {
+    id: 7,
     label: "Locations",
     icon: <LocationOnIcon />,
     route: "/locations",
   },
-  { id: 7, label: "Settings", icon: <SettingsIcon />, route: "/settings" },
+
+  { id: 8, label: "Settings", icon: <SettingsIcon />, route: "/settings" },
 ];
 interface Props {
   title?: string;
@@ -133,7 +140,7 @@ const NavBar = ({ title }: Props) => {
                 }
               }}
             >
-              {accessToken ? <MenuIcon /> : <Facebook />}
+              <MenuIcon />
             </IconButton>
             <Box>
               {accessToken
